@@ -59,21 +59,15 @@ async function ensureDb() {
   }
 }
 
-// For Vercel serverless - cache the connection
-module.exports = async (req, res) => {
-  await ensureDb();
-  return app(req, res);
-};
+const PORT = process.env.PORT || 3001;
 
-// For local development
-if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
-  const PORT = process.env.PORT || 3001;
-  ensureDb().then(() => {
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
-  }).catch(err => {
-    console.error('Failed to start server:', err);
-    process.exit(1);
+ensureDb().then(() => {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
   });
-}
+}).catch(err => {
+  console.error('Failed to start server:', err);
+  process.exit(1);
+});
+
+module.exports = app;
